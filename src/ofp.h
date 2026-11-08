@@ -15,7 +15,7 @@
 #define OFP_MAX_ENTRIES 8192
 #define OFP_PATH 32768
 #define OFP_ERROR 1024
-#define OFP_VERSION L"1.0.0"
+#define OFP_VERSION L"1.1.0"
 typedef struct {
     wchar_t name[512], label[128];
     uint64_t offset, size, encrypted;
@@ -76,4 +76,10 @@ int ofp_sparse_size(const wchar_t *, uint64_t *, volatile LONG *, wchar_t *);
 int ofp_join(wchar_t *, const wchar_t *, const wchar_t *);
 int ofp_finalize_output(HANDLE, const wchar_t *, wchar_t *);
 void ofp_discard_output(HANDLE);
+typedef struct {
+    HANDLE *handles;
+    size_t count, cap;
+} OfpDirLocks;
+int ofp_prepare_dirs(OfpDirLocks *, const wchar_t *, int, int, wchar_t *);
+void ofp_unlock_dirs(OfpDirLocks *);
 #endif

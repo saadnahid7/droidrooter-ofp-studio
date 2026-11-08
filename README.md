@@ -1,9 +1,9 @@
 # DroidRooter's OFP Studio
 
-**A portable Windows GUI for extracting OPPO and realme OFP firmware. Written in C.**
+**A portable Windows GUI for extracting OPPO and realme OFP firmware, with bundled Magisk 31.1.**
 
 [Download the Windows EXE](https://github.com/saadnahid7/droidrooter-ofp-studio/releases/latest)
-· [Qualification and limits](docs/qualification.md) · [MIT license](LICENSE)
+Â· [Qualification and limits](docs/qualification.md) Â· [GPL-3.0 license](LICENSE)
 
 ![DroidRooter's OFP Studio Windows interface](assets/screenshot.jpg)
 
@@ -76,19 +76,17 @@ hashes do not authenticate firmware provenance.
 
 C11, Win32/common controls, Windows CNG (AES/MD5/SHA-256), XMLLite and native shell
 dialogs. Extraction uses a worker thread, 64-bit file offsets and a bounded 4 MiB
-stream buffer. No Electron, webview, Python, bundled crypto library or external
-executable is used at runtime. See [measured qualification](docs/qualification.md)
+stream buffer. The Rust patch engine is statically linked into the C GUI.
+No Electron, webview, Python or external executable is used at runtime. See [measured qualification](docs/qualification.md)
 for correctness, performance and DLL dependency evidence.
 
 ## Build from source
 
-Development requires a Windows C compiler, CMake and Ninja; these are **build-time**
+Development requires a Windows C compiler, CMake, Ninja and Rust GNU; these are **build-time**
 tools, not dependencies for people downloading the EXE. The tested toolchain is
 MinGW-w64 GCC 14.2 (UCRT).
 
-```powershell
-.\build.ps1
-```
+See [build and corresponding-source instructions](docs/build.md) for pinned dependencies, offline source and commands.
 
 The GUI is `build/OFPStudio.exe`. `build/ofp-test.exe` is a development test driver,
 not part of the user distribution. Python is used only for development fixtures:
@@ -106,3 +104,28 @@ CI builds the app, runs the fixture suite and uploads the portable EXE.
 Based on [Bjoern Kerler's oppo_decrypt](https://github.com/bkerler/oppo_decrypt).
 See [third-party notices](THIRD_PARTY_NOTICES.md) for adapted format logic and credits.
 This project is not affiliated with OPPO, realme, OnePlus or MediaTek.
+
+## Magisk image patcher
+
+![Magisk 31.1 patcher](assets/magisk-screenshot.jpg)
+
+Open **Magisk patcher**, browse a stock image (or use a completed extracted image),
+choose an output folder and click **Patch image**. A filename is generated
+automatically; subsequent patches receive a numbered filename. The original stays
+unchanged; the result is a separate image plus a JSON provenance report.
+
+Official Magisk **31.1 (31100)** is embedded and checked against SHA-256
+`89cefac0a318afa39fb3880c45c87b036c05bc1ebf02a7a715b7f8d7c26ac6e7`.
+No APK download or phone connection is needed to patch. Standard ARM64 boot headers
+v0-v4 with supported gzip/legacy-LZ4 ramdisks are accepted; vendor_boot, already
+patched images, embedded v4 signatures and ambiguous layouts are rejected.
+Verity/encryption settings are kept. Appended AVB metadata is rebuilt **unsigned**,
+with the target hash updated and other descriptors retained. The target must accept
+modified boot images. The default follows official offline patching behavior without a pre-init
+override. An optional override is available under **Advanced**; no partition name
+is guessed or verified against a connected device. No phone flashing or physical boot qualification is
+performed. See [patcher qualification](docs/magisk-qualification.md).
+
+The combined v1.1 application is GPL-3.0-only. The original C extractor retains its
+[MIT notice](LICENSE-MIT-extractor). Releases include corresponding source and
+dependency licenses alongside the portable executable.

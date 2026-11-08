@@ -1,4 +1,5 @@
 #include "ofp.h"
+#include "magisk.h"
 #include <commctrl.h>
 #include <commdlg.h>
 #include <dwmapi.h>
@@ -30,7 +31,8 @@ enum {
     SAVE,
     ABOUT,
     DETAILS,
-    NEW_JOB
+    NEW_JOB,
+    MAGISK_PATCHER
 };
 static const COLORREF BG = RGB(14, 20, 31), SIDE = RGB(10, 16, 26), CARD = RGB(22, 31, 45),
                       INK = RGB(231, 238, 247), MUTED = RGB(151, 170, 193),
@@ -138,6 +140,7 @@ static void layout(void) {
     place(app->controls[OPEN], x, h - 52, 142, 36);
     place(app->controls[NEW_JOB], x + 152, h - 52, 144, 36);
     place(app->controls[LOG], 20, h - 108, 168, 32);
+    place(app->controls[MAGISK_PATCHER], 20, h - 152, 168, 32);
     place(app->controls[SAVE], 20, h - 70, 168, 32);
     place(app->controls[ABOUT], 20, h - 33, 168, 25);
     if (app->logwin && IsWindow(app->logwin)) {
@@ -148,8 +151,8 @@ static void layout(void) {
     InvalidateRect(app->win, NULL, TRUE);
 }
 static void enabled(void) {
-    int ids[] = {ID_INPUT, BROWSE,   OUTPUT, FOLDER,  FILES,      SEARCH, ALL,
-                 CLEAR,    MANIFEST, VERIFY, SCATTER, OPEN_AFTER, NEW_JOB};
+    int ids[] = {ID_INPUT, BROWSE,   OUTPUT, FOLDER,  FILES,      SEARCH,  ALL,
+                 CLEAR,    MANIFEST, VERIFY, SCATTER, OPEN_AFTER, NEW_JOB, MAGISK_PATCHER};
     for (size_t i = 0; i < sizeof(ids) / sizeof(ids[0]); i++)
         EnableWindow(app->controls[ids[i]], !app->busy);
     EnableWindow(app->controls[CANCEL], app->busy);
@@ -552,6 +555,7 @@ static LRESULT CALLBACK window_proc(HWND w, UINT m, WPARAM wp, LPARAM lp) {
         button(L"Activity log", LOG);
         button(L"Save log", SAVE);
         button(L"About / help", ABOUT);
+        button(L"Magisk patcher", MAGISK_PATCHER);
         for (int id = ID_INPUT; id < 160; id++)
             if (app->controls[id])
                 SendMessageW(app->controls[id], EM_SETLIMITTEXT, OFP_PATH - 1, 0);
@@ -562,7 +566,7 @@ static LRESULT CALLBACK window_proc(HWND w, UINT m, WPARAM wp, LPARAM lp) {
         enabled();
         totals();
         append_log(
-            L"DroidRooter's OFP Studio 1.0.0 - native Windows extraction. No external runtime.");
+            L"DroidRooter's OFP Studio 1.1.0 - native Windows extraction. No external runtime.");
         return 0;
     }
     case WM_SIZE:
@@ -631,7 +635,20 @@ static LRESULT CALLBACK window_proc(HWND w, UINT m, WPARAM wp, LPARAM lp) {
     }
     case WM_COMMAND: {
         int id = LOWORD(wp), code = HIWORD(wp);
-        if (id == BROWSE && !app->busy)
+        if (id == MAGISK_PATCHER && !app->busy) {
+            wchar_t selected[OFP_PATH] = L"";
+            int row = ListView_GetNextItem(app->controls[FILES], -1, LVNI_SELECTED);
+            if (row >= 0) {
+                LVITEMW item = {0};
+                item.mask = LVIF_PARAM;
+                item.iItem = row;
+                ListView_GetItem(app->controls[FILES], &item);
+                if (item.lParam >= 0 && item.lParam < app->archive.count &&
+                    app->archive.entries[item.lParam].completed && *app->dest)
+                    ofp_join(selected, app->dest, app->archive.entries[item.lParam].name);
+            }
+            ofp_open_patcher(w, *selected ? selected : NULL);
+        } else if (id == BROWSE && !app->busy)
             browse();
         else if (id == FOLDER && !app->busy)
             folder();
@@ -694,7 +711,7 @@ static LRESULT CALLBACK window_proc(HWND w, UINT m, WPARAM wp, LPARAM lp) {
         else if (id == ABOUT)
             MessageBoxW(
                 w,
-                L"DroidRooter's OFP Studio 1.0.0\nNative C / Windows 10 and 11 x64\n\nSelect an "
+                L"DroidRooter's OFP Studio 1.1.0\nNative C / Windows 10 and 11 x64\n\nSelect an "
                 L"OFP, choose an output folder, tick the images you need, then Extract selected. "
                 L"Drag-and-drop is optional. Filtering preserves hidden selections.\n\nSupports "
                 L"known MediaTek and Qualcomm raw OFP formats. ZIP-wrapped OFP and OnePlus OPS are "
@@ -779,6 +796,8 @@ static LRESULT CALLBACK window_proc(HWND w, UINT m, WPARAM wp, LPARAM lp) {
         return 0;
     }
     case WM_CLOSE:
+        if (ofp_patcher_is_open())
+            return 0;
         if (app->busy) {
             if (MessageBoxW(
                     w,
@@ -834,7 +853,7 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE previous, PWSTR command, int s
     UpdateWindow(w);
     MSG msg;
     while (GetMessageW(&msg, NULL, 0, 0) > 0) {
-        if (!IsDialogMessageW(w, &msg)) {
+        if (!ofp_patcher_dialog_message(&msg) && !IsDialogMessageW(w, &msg)) {
             TranslateMessage(&msg);
             DispatchMessageW(&msg);
         }

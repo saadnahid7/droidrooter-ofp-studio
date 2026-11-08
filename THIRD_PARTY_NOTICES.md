@@ -1,5 +1,27 @@
 # Third-party notices
 
+## Magisk integration (v1.1)
+
+The combined application is GPL-3.0-only (see LICENSE). The original extractor's
+MIT grant remains in LICENSE-MIT-extractor.
+
+- Official [Magisk](https://github.com/topjohnwu/Magisk), John Wu and contributors,
+  v31.1, GPL-3.0. The unmodified official APK is embedded as data. Its source,
+  submodules and notices accompany the binary in the corresponding-source archive.
+- [avbroot](https://github.com/chenxiaolong/avbroot), Chen Xiaolong and contributors,
+  v3.37.1 revision `88362620a21377b160ae7500f64f144a2262a281`, GPL-3.0-only.
+  Statically linked boot/CPIO/AVB parsing and Magisk patching implementation.
+- Pixel Root Station native patcher adapter, GPL-3.0-only: ramdisk/payload validation
+  helpers were adapted for this application. The Windows application code and
+  private project/device metadata are not distributed here.
+- Rust dependencies are pinned in native/magisk-engine/Cargo.lock. Their complete
+  source and individual license/copyright files are in the release's vendor tree.
+  These notices supplement, rather than replace, those upstream license files.
+
+See docs/build.md for corresponding-source contents and build instructions.
+
+## Original OFP extractor
+
 OFP metadata decoding, key profiles, key derivation and Qualcomm section/hash
 semantics are adapted from [Bjoern Kerler's oppo_decrypt](https://github.com/bkerler/oppo_decrypt),
 revision `3456e850fb408f4dfab43e9788970c9be2caa743`.

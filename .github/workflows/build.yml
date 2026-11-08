@@ -16,11 +16,21 @@ jobs:
       - uses: msys2/setup-msys2@v2
         with:
           msystem: UCRT64
+          path-type: inherit
           update: false
           install: >-
             mingw-w64-ucrt-x86_64-gcc
             mingw-w64-ucrt-x86_64-cmake
             mingw-w64-ucrt-x86_64-ninja
+      - name: Prepare build-time Rust and verified bundled Magisk
+        shell: pwsh
+        run: |
+          rustup toolchain install stable-x86_64-pc-windows-gnu --profile minimal
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          New-Item -ItemType Directory .local/magisk -Force | Out-Null
+          Invoke-WebRequest 'https://github.com/topjohnwu/Magisk/releases/download/v31.1/Magisk-v31.1.apk' -OutFile '.local/magisk/Magisk-v31.1.apk'
+          $digest = (Get-FileHash '.local/magisk/Magisk-v31.1.apk' -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($digest -ne '89cefac0a318afa39fb3880c45c87b036c05bc1ebf02a7a715b7f8d7c26ac6e7') { throw 'Official Magisk APK digest mismatch' }
       - name: Compile native GUI and test driver
         shell: msys2 {0}
         run: |
@@ -32,11 +42,22 @@ jobs:
           python -m pip install -r requirements-dev.txt
           python tests/test_engine.py
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          python tests/test_magisk.py
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+      - name: Test native patch engine
+        shell: pwsh
+        run: |
+          $env:OFP_MAGISK_APK = (Resolve-Path '.local/magisk/Magisk-v31.1.apk').Path
+          $env:CARGO_TARGET_DIR = Join-Path $PWD 'build/native'
+          $env:RUSTFLAGS = '-C linker=rust-lld -C linker-flavor=ld.lld -C link-self-contained=yes'
+          cargo +stable-x86_64-pc-windows-gnu test --locked --manifest-path native/magisk-engine/Cargo.toml
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
       - uses: actions/upload-artifact@v4
         with:
           name: OFP-Studio-windows-x64
           path: |
             build/OFPStudio.exe
             LICENSE
+            LICENSE-MIT-extractor
             THIRD_PARTY_NOTICES.md
             README.md
