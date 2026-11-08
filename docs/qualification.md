@@ -48,3 +48,5 @@ GTK, MinGW runtime DLL or separately installed VC redistributable is required.
 ## Final release recheck
 
 After the independent code review and finalization/cancellation fixes, a fresh full F15 extraction completed successfully in 313.7 seconds with SHA-256 generation, same-handle readback verification and scatter conversion enabled. All 56 output hashes again match the verified Python reference. Logical aliases are retained in OFP-Studio-report.txt, and no partial files remain. All 29 behavioral tests pass. GUI cancellation retained completed images, removed the unfinished image, published no success manifest, and displayed a truthful incomplete-verification status.
+
+Independent [GitHub Windows CI](https://github.com/saadnahid7/droidrooter-ofp-studio/actions/runs/42476163646) built the GUI and test driver and passed all 29 tests. The published EXE and ZIP digests match their local SHA-256 values. The portable ZIP contains only the GUI EXE, usage instructions, license and third-party notices; its EXE is identical to the direct download. The packaged EXE was launched successfully.

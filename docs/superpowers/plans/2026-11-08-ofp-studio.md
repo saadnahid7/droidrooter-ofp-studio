@@ -49,6 +49,6 @@ Files: src/gui.c, assets/app.rc, assets/app.manifest, CMakeLists.txt, build.ps1.
 
 ### Task 5: Public distribution
 Files: README.md, LICENSE, THIRD_PARTY_NOTICES.md, docs/qualification.md, .github/workflows/build.yml.
-- [ ] Package portable EXE, notices and instructions; generate checksums.
-- [ ] Review staged files and secret/private-data exclusions, commit, create public saadnahid7/ofp-studio, push and publish tagged release with EXE/ZIP/checksums.
-- [ ] Verify remote repository, release assets and CI results.
+- [x] Package portable EXE, notices and instructions; generate checksums.
+- [x] Review staged files and secret/private-data exclusions, commit, create public saadnahid7/ofp-studio, push and publish tagged release with EXE/ZIP/checksums.
+- [x] Verify remote repository, release assets and CI results.

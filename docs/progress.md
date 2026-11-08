@@ -17,3 +17,5 @@ Benchmark: native 231.401 s / 9,359,360-byte peak working set; Python 224.670 s 
 
 Final release F15 recheck: 313.7 seconds; all 56 hashes match reference; logical aliases and validated scatter present; no partial files. GUI cancellation independently rehearsed with readback enabled; status correctly says verification did not complete.
 Tasks 1-4 complete. Final reviewed fixes covered by 29 green behavioral tests. No deferred minor findings remain.
+
+Task 5 complete: public repository and v1.0.0 release published with standalone EXE, portable ZIP and SHA-256 checksums. GitHub Windows build and all 29 tests passed independently. Uploaded GitHub asset digests match local files; ZIP contents and EXE identity verified. Packaged EXE launched successfully. CI: https://github.com/saadnahid7/droidrooter-ofp-studio/actions/runs/42476163646
