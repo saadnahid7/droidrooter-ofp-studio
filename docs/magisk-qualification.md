@@ -38,3 +38,11 @@ filenames; final creation still rejects races/overwrites.
 Packaged EXE GUI rehearsal: default patch with no pre-init override succeeded;
 a second patch generated a numbered filename and preserved the first image/report.
 The final progress bar reached completion. Runtime imports are Windows system DLLs only.
+
+Additional release checks: the packaged GUI rejected an already-patched image and
+cancelled a real-size F15 patch without publishing a new image/report or leaving
+partial files. The complete corresponding-source ZIP passed CRC/duplicate/path
+checks, resolved dependencies offline, built successfully with Cargo network
+access disabled, and its rebuilt drivers passed all 29 extractor and 8 workflow
+tests. An independent stdlib Python parser confirmed the F15 kernel/DTB, compressed
+init backup, official APK payloads, legacy boot ID and AVB hashes/descriptors.

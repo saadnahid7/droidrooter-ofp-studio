@@ -14,16 +14,17 @@
 - GPL corresponding source and notices accompany the combined distribution.
 
 ### Task 1: Native patch engine
-- [ ] Add failing transformation tests using actual pinned Magisk APK and synthetic image fixtures.
-- [ ] Implement bounded image/ramdisk validation, Magisk patching, original SHA1 correction, legacy boot ID and appended AVB handling.
-- [ ] Expose a narrow C ABI with cancellation and owned buffers; run engine tests.
+- [x] Add failing transformation tests using actual pinned Magisk APK and synthetic image fixtures.
+- [x] Implement bounded image/ramdisk validation, Magisk patching, original SHA1 correction, legacy boot ID and appended AVB handling.
+- [x] Expose a narrow C ABI with cancellation and owned buffers; run engine tests.
 
 ### Task 2: C integration and GUI
-- [ ] Link the engine and embed the APK; retain system-DLL-only runtime imports.
-- [ ] Add patcher window and worker, image/output folder browser, extracted-image shortcut and optional Advanced override.
-- [ ] Publish image/provenance safely and test GUI success, errors and cancellation.
+- [x] Link the engine and embed the APK; retain system-DLL-only runtime imports.
+- [x] Add patcher window and worker, image/output folder browser, extracted-image shortcut and optional Advanced override.
+- [x] Publish image/provenance safely and test GUI success, errors and cancellation.
 
 ### Task 3: Qualification and distribution
-- [ ] Verify real F15 offline output and all extraction regressions.
-- [ ] Independent code review; fix material findings and rerun checks.
-- [ ] Update licenses/docs/CI, package EXE and corresponding source, publish v1.1.0 and verify assets/CI.
+- [x] Verify real F15 offline output and all extraction regressions.
+- [x] Independent code review; fix material findings and rerun checks.
+- [x] Update licenses/docs/CI and verify an offline build from corresponding source.
+- [ ] Publish v1.1.0 and verify uploaded asset digests and Windows CI.
