@@ -1,0 +1,9 @@
+/build*/
+/dist/
+/.local/
+/.superpowers/
+__pycache__/
+*.ofp
+*.img
+*.zip
+*.log

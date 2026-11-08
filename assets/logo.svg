@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+ <title>DroidRooter's OFP Studio</title>
+ <rect x="16" y="16" width="480" height="480" rx="110" fill="#101b27"/>
+ <rect x="28" y="28" width="456" height="456" rx="100" fill="none" stroke="#3ddbbc" stroke-width="12"/>
+ <text x="256" y="300" text-anchor="middle" font-family="Consolas,monospace" font-weight="bold" font-size="238" fill="#3ddbbc">{r}</text>
+ <path d="M256 326v71m-32-29 32 32 32-32" fill="none" stroke="#edf6ff" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
